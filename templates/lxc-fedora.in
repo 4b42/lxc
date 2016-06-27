@@ -27,7 +27,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #Configurations
-default_path=@LXCPATH@
+default_path=/var/lib/lxc
 
 # Some combinations of the tuning knobs below do not exactly make sense.
 # but that's ok.
@@ -1033,7 +1033,7 @@ update_fedora()
 
 install_fedora()
 {
-    mkdir -p @LOCALSTATEDIR@/lock/subsys/
+    mkdir -p /var/lock/subsys/
     (
         flock -x 9
         if [ $? -ne 0 ]; then
@@ -1066,7 +1066,7 @@ install_fedora()
         fi
 
         return 0
-    ) 9>@LOCALSTATEDIR@/lock/subsys/lxc-fedora
+    ) 9>/var/lock/subsys/lxc-fedora
 
     return $?
 }
@@ -1117,10 +1117,10 @@ lxc.rootfs = $rootfs_path
 
     rm -f $config_path/config.def
 
-    if [ -e "@LXCTEMPLATECONFIG@/fedora.common.conf" ]; then
+    if [ -e "/usr/share/lxc/config/fedora.common.conf" ]; then
         echo "
 # Include common configuration
-lxc.include = @LXCTEMPLATECONFIG@/fedora.common.conf
+lxc.include = /usr/share/lxc/config/fedora.common.conf
 " >> $config_path/config
     fi
 
@@ -1172,7 +1172,7 @@ clean()
         echo -n "Purging the download cache for Fedora-$release..."
         rm --preserve-root --one-file-system -rf $cache && echo "Done." || exit 1
         exit 0
-    ) 9>@LOCALSTATEDIR@/lock/subsys/lxc-fedora
+    ) 9>/var/lock/subsys/lxc-fedora
 }
 
 usage()
@@ -1283,7 +1283,7 @@ then
 fi
 
 # Allow the cache base to be set by environment variable
-cache_base=${LXC_CACHE_PATH:-"@LOCALSTATEDIR@/cache/lxc"}/fedora/$basearch
+cache_base=${LXC_CACHE_PATH:-"/var/cache/lxc"}/fedora/$basearch
 
 # Let's do something better for the initial root password.
 # It's not perfect but it will defeat common scanning brute force
